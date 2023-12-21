@@ -12,10 +12,6 @@ const Page = () => {
 
   console.log(session?.user);
 
-  if (status != "authenticated") {
-    router.push("/");
-  }
-
   return (
     <div className="flex justify-center items-center w-full h-[100dvh] bg-slate-200">
       <div className=" flex flex-col gap-4 rounded-2xl bg-secondaryLightTheme p-8 shadow-xl dark:bg-darkGray sm:px-16 bg-white">
