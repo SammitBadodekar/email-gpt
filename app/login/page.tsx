@@ -12,7 +12,7 @@ const Page = () => {
 
   console.log(session?.user);
 
-  if (status == "authenticated") {
+  if (status != "authenticated") {
     router.push("/");
   }
 
