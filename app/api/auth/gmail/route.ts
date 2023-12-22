@@ -32,11 +32,11 @@ export const GET = async (req: NextRequest) => {
         }
       });
     }
-    redirect("/");
-    return;
+    return new NextResponse(
+      "Gmail authorization successful , please go to home page. \n \n \n \n  (  redirect(`/`) method was giving server error only in production , so had to do this , we'll fix this later )"
+    );
   } catch (error) {
     console.log(error);
-    redirect("/");
     return new NextResponse("error");
   }
 };

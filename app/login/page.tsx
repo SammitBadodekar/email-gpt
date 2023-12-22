@@ -18,7 +18,7 @@ const Page = () => {
   }
 
   return (
-    <div className="flex justify-center items-center w-full h-[100dvh] bg-slate-200">
+    <div className="flex justify-center items-center w-full h-[100dvh] overflow-y-scroll bg-slate-200">
       <div className=" flex flex-col gap-4 rounded-2xl bg-secondaryLightTheme p-8 shadow-xl dark:bg-darkGray sm:px-16 bg-white">
         <h1 className=" text-center text-xl font-black sm:px-8 sm:text-2xl">
           Welcome Back !!

@@ -25,6 +25,8 @@ const DisplayEmails = () => {
         }
       } catch (error) {
         toast.error(`${error}`);
+        setIsLoading(false);
+        setIsSubmitted(false);
       }
     };
     getEmailData();
