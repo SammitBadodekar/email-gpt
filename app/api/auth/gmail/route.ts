@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { options } from "../[...nextauth]/options";
 import { oAuth2Client } from "@/lib/oauth";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -33,10 +34,12 @@ export const GET = async (req: NextRequest) => {
         }
       });
     }
+    redirect("/");
     return new NextResponse(
       "Gmail authorization successful , please go to home page. \n \n \n \n  (  redirect(`/`) method was giving server error only in production , so had to do this , we'll fix this later )"
     );
   } catch (error) {
+    redirect("/");
     console.log(error);
     return new NextResponse(JSON.stringify(error));
   }
