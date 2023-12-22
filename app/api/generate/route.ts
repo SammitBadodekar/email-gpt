@@ -69,7 +69,9 @@ export const POST = async (req: NextRequest) => {
         messages: [
           {
             role: "system",
-            content: `You are a professional email writer who gives response based on previous emails and on the input prompt that the user provides, you will be provided with an array of emails with format {message: string , date: int } as the history of conversation and a user input. This is the email history Array: ${JSON.stringify(
+            content: `You are a professional email writer who gives response based on previous emails and on the input prompt that the user provides, you will be provided with an array of emails from ${
+              body.email
+            } with format {message: string , date: int } as the history of conversation and a user input. This is the email history Array: ${JSON.stringify(
               emails
             )}\n and the user input: ${body.prompt} \n user name: ${
               user.name
