@@ -13,8 +13,8 @@ export default async function Home() {
   });
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-20 gap-8">
-      Home Page
+    <main className="flex h-[100dvh] flex-col pt-20 items-center gap-8 bg-gray-200">
+      <p className=" font-medium">Email GPT</p>
       <DisplayEmails />
       <div className=" flex gap-8">
         <Button asChild variant="secondary">

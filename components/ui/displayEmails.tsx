@@ -1,10 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { gmail } from "../../lib/gmail";
-import { getEmailDetails, getEmails } from "@/app/actions";
 import { Button } from "./button";
-import Email from "./Email";
 import axios from "axios";
+import { PiSpinnerGapLight } from "react-icons/pi";
+import toast from "react-hot-toast";
 
 const DisplayEmails = () => {
   const [input, setInput] = useState("");
@@ -14,14 +13,18 @@ const DisplayEmails = () => {
 
   useEffect(() => {
     const getEmailData = async () => {
-      if (isSubmitted) {
-        const { data } = await axios.post("/api/generate", {
-          email: input,
-          prompt: textarea,
-        });
-        setTextarea(data.message.content);
-        setIsLoading(false);
-        setIsSubmitted(false);
+      try {
+        if (isSubmitted) {
+          const { data } = await axios.post("/api/generate", {
+            email: input,
+            prompt: textarea,
+          });
+          setTextarea(data.message.content);
+          setIsLoading(false);
+          setIsSubmitted(false);
+        }
+      } catch (error) {
+        toast.error(`${error}`);
       }
     };
     getEmailData();
@@ -43,7 +46,7 @@ const DisplayEmails = () => {
           name=""
           id=""
           cols={30}
-          rows={3}
+          rows={5}
           value={textarea}
           onChange={(e) => {
             setTextarea(e.target.value);
@@ -56,9 +59,15 @@ const DisplayEmails = () => {
             setIsSubmitted((prev) => !prev);
             setIsLoading(true);
           }}
-          disabled={isLoading}
+          disabled={isLoading || !input}
         >
-          Generate
+          {isLoading ? (
+            <div>
+              <PiSpinnerGapLight className=" animate-spin" />
+            </div>
+          ) : (
+            "Generate"
+          )}
         </Button>
       </div>
     </div>

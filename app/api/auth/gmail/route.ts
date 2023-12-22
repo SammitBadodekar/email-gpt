@@ -9,7 +9,6 @@ export const GET = async (req: NextRequest) => {
   try {
     const searchParams = req.nextUrl.searchParams;
     const code = searchParams.get("code");
-    console.log("code", code);
 
     const session = await getServerSession(options);
 
@@ -21,8 +20,6 @@ export const GET = async (req: NextRequest) => {
           const accessToken = tokens?.access_token;
           const refreshToken = tokens?.refresh_token;
 
-          console.log("tokens", accessToken, refreshToken);
-
           await prisma.user.update({
             where: {
               email: session?.user?.email as string,
@@ -32,10 +29,6 @@ export const GET = async (req: NextRequest) => {
               access_token: accessToken,
             },
           });
-
-          // Store tokens securely
-
-          // Use the access token to make API calls
         }
       });
     }

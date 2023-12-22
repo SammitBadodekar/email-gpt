@@ -5,12 +5,17 @@ import React from "react";
 import { BsGoogle } from "react-icons/bs";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const Page = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
 
   console.log(session?.user);
+
+  if (status === "authenticated") {
+    router.push("/");
+  }
 
   return (
     <div className="flex justify-center items-center w-full h-[100dvh] bg-slate-200">
@@ -19,7 +24,9 @@ const Page = () => {
           Welcome Back !!
         </h1>
         <Button
-          onClick={() => signIn("google")}
+          onClick={() => {
+            signIn("google");
+          }}
           className="flex items-center gap-2 font-extrabold"
         >
           <BsGoogle />

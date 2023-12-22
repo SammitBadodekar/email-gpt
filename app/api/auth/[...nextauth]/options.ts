@@ -15,7 +15,6 @@ export const options: AuthOptions = {
   },
   events: {
     async signIn(message) {
-      console.log(message);
       const existingUser = await prisma.user.findUnique({
         where: {
           id: message.user.id,
