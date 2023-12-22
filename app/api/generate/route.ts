@@ -33,7 +33,7 @@ export const POST = async (req: NextRequest) => {
       const data = await gmail.users.messages.list({
         userId: "me",
         q: `(from:${body.email} OR to:${body.email}) AND (from:me OR to:me)`,
-        maxResults: 50,
+        maxResults: 20,
       });
 
       const emails: any[] = [];
@@ -45,6 +45,7 @@ export const POST = async (req: NextRequest) => {
             userId: "me",
             id: email.id!,
             format: "full",
+            metadataHeaders: ["From", "To"],
           })
         );
       });
@@ -52,12 +53,17 @@ export const POST = async (req: NextRequest) => {
       const resp = await Promise.all(promises);
 
       resp.forEach((email) => {
+        console.log(email.data.payload);
         const formattedEmail = {
           message: email.data.snippet,
-          date: email.data.internalDate,
+          date: email.data.payload.headers[1].value,
+          from: email.data.payload.headers[4].value,
+          to: email.data.payload.headers[5].value,
         };
         emails.push(formattedEmail);
       });
+
+      console.log(emails);
 
       const completion = await openai.chat.completions.create({
         messages: [
@@ -65,7 +71,9 @@ export const POST = async (req: NextRequest) => {
             role: "system",
             content: `You are a professional email writer who gives response based on previous emails and on the input prompt that the user provides, you will be provided with an array of emails with format {message: string , date: int } as the history of conversation and a user input. This is the email history Array: ${JSON.stringify(
               emails
-            )}\n and the user input: ${body.prompt} \n Now give the appropriate email reponse based on the previous history emails and user input`,
+            )}\n and the user input: ${body.prompt} \n user name: ${
+              user.name
+            } \n Now give the appropriate email reponse based on the previous history emails and user input`,
           },
         ],
         model: "gpt-3.5-turbo",
