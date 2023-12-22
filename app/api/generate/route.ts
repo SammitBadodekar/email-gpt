@@ -15,7 +15,6 @@ const openai = new OpenAI({
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
-  console.log(body);
 
   try {
     const session = await getServerSession(options);
@@ -53,7 +52,6 @@ export const POST = async (req: NextRequest) => {
       const resp = await Promise.all(promises);
 
       resp.forEach((email) => {
-        console.log(email.data.payload);
         const formattedEmail = {
           message: email.data.snippet,
           date: email.data.payload.headers[1].value,
@@ -63,22 +61,24 @@ export const POST = async (req: NextRequest) => {
         emails.push(formattedEmail);
       });
 
-      console.log(emails);
 
       const completion = await openai.chat.completions.create({
+        model: "gpt-4",
         messages: [
-          {
-            role: "system",
-            content: `You are a professional email writer who gives response based on previous emails and on the input prompt that the user provides, you will be provided with an array of emails from ${
-              body.email
-            } with format {message: string , date: int } as the history of conversation and a user input. This is the email history Array: ${JSON.stringify(
-              emails
-            )}\n and the user input: ${body.prompt} \n user name: ${
-              user.name
-            } \n Now give the appropriate email reponse based on the previous history emails and user input`,
-          },
-        ],
-        model: "gpt-3.5-turbo",
+        {
+          "role": "system",
+          "content": `You are a professional email writer who gives responses based on previous emails and on the input prompt that the user provides, you will be provided with an array of emails with format {message: string , date: string, from: string, to: string } as the history of conversation, where the from and to are the email Ids of the users and user prompt. Give the appropriate email response based on the previous history emails and user prompt, use the history email array as context so any names or information should be used from context. You will be penalized if you use any information other than available in history and the response should be only in email format and the tone and style of the email should be the same as the requesting user.\n\nRequesting user email:\n${user?.email}\n\nRequesting username:\n${user?.name}\n\nEmail history Array:\n${JSON.stringify(emails)}`
+        },
+        {
+          "role": "user",
+          "content": `User prompt:\n${body.prompt}`
+        }
+      ],
+      temperature: 1,
+      max_tokens: 3000,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
       });
 
       console.log(completion.choices[0]);
