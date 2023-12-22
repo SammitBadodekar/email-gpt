@@ -4,6 +4,8 @@ import Link from "next/link";
 import DisplayEmails from "@/components/ui/displayEmails";
 import { Button } from "@/components/ui/button";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
