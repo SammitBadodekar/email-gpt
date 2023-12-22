@@ -5,6 +5,8 @@ import { options } from "../auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
 import { gmail } from "@/lib/gmail";
 
+export const dynamic = "force-dynamic";
+
 import OpenAI from "openai";
 
 const openai = new OpenAI({

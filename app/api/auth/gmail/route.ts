@@ -3,7 +3,8 @@ import { prisma } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { options } from "../[...nextauth]/options";
 import { oAuth2Client } from "@/lib/oauth";
-import { redirect } from "next/navigation";
+
+export const dynamic = "force-dynamic";
 
 export const GET = async (req: NextRequest) => {
   try {
