@@ -37,6 +37,6 @@ export const GET = async (req: NextRequest) => {
     );
   } catch (error) {
     console.log(error);
-    return new NextResponse("error");
+    return new NextResponse(JSON.stringify(error));
   }
 };
