@@ -59,19 +59,13 @@ export const POST = async (req: NextRequest) => {
         emails.push(formattedEmail);
       });
 
-      console.log(
-        `You are a professional email writer who gives response base on the previous conversations, you will be provided with an array of conversation with format {message: <message> , date: <time of message> }.This is the Array of messages ${JSON.stringify(
-          emails
-        )} , ${body.prompt} , now give the appropriate response`
-      );
-
       const completion = await openai.chat.completions.create({
         messages: [
           {
             role: "system",
-            content: `You are a professional email writer who gives response base on the previous conversations, you will be provided with an array of conversation with format {message: string , date: int }.This is the actual Array of messages:${JSON.stringify(
+            content: `You are a professional email writer who gives response based on previous emails and on the input prompt that the user provides, you will be provided with an array of emails with format {message: string , date: int } as the history of conversation and a user input. This is the email history Array: ${JSON.stringify(
               emails
-            )}, now give the appropriate response`,
+            )}\n and the user input: ${body.prompt} \n Now give the appropriate email reponse based on the previous history emails and user input`,
           },
         ],
         model: "gpt-3.5-turbo",
