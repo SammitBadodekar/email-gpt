@@ -62,7 +62,7 @@ export const POST = async (req: NextRequest) => {
       });
 
       const completion = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-3.5-turbo-16k",
         messages: [
           {
             role: "system",
@@ -78,7 +78,6 @@ export const POST = async (req: NextRequest) => {
           },
         ],
         temperature: 1,
-        max_tokens: 3000,
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0,
