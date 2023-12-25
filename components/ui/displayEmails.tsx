@@ -15,10 +15,16 @@ const DisplayEmails = () => {
     const getEmailData = async () => {
       try {
         if (isSubmitted) {
-          const { data } = await axios.post("/api/generate", {
-            email: input,
-            prompt: textarea,
-          });
+          const { data } = await axios.post(
+            "/api/generate",
+            {
+              email: input,
+              prompt: textarea,
+            },
+            {
+              timeout: 30000,
+            }
+          );
           setTextarea(data.message.content);
           setIsLoading(false);
           setIsSubmitted(false);
