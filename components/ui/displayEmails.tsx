@@ -28,7 +28,7 @@ const DisplayEmails = () => {
   });
 
   return (
-    <div className="w-[30%]">
+    <div className="w-full lg:w-[50%] flex justify-center items-center p-8 ">
       <form
         onSubmit={(e) => {
           handleSubmit(e);
@@ -36,6 +36,7 @@ const DisplayEmails = () => {
             setMessages([]);
           }
         }}
+        className="w-full"
       >
         <div className=" flex flex-col gap-4 w-full">
           <input
