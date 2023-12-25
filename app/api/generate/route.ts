@@ -4,6 +4,7 @@ import { oAuth2Client } from "@/lib/oauth";
 import { options } from "../auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
 import { gmail } from "@/lib/gmail";
+import { OpenAIStream, StreamingTextResponse } from "ai";
 
 export const dynamic = "force-dynamic";
 
@@ -83,15 +84,15 @@ export const POST = async (req: NextRequest) => {
             content: `User prompt:\n${body.prompt}`,
           },
         ],
+        stream: true,
         temperature: 1,
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0,
       });
 
-      console.log(completion.choices[0]);
-
-      return new NextResponse(JSON.stringify(completion.choices[0]));
+      const stream = OpenAIStream(completion);
+      return new StreamingTextResponse(stream);
     } else {
       return new NextResponse(
         JSON.stringify({

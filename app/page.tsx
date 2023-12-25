@@ -4,8 +4,6 @@ import Link from "next/link";
 import DisplayEmails from "@/components/ui/displayEmails";
 import { Button } from "@/components/ui/button";
 
-export const dynamic = "force-dynamic";
-
 export default async function Home() {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
@@ -15,7 +13,7 @@ export default async function Home() {
   });
 
   return (
-    <main className="flex h-[100dvh] flex-col pt-20 items-center gap-8 bg-gray-200">
+    <main className="flex h-[100dvh] flex-col justify-center items-center gap-8 bg-gray-200 overflow-y-scroll">
       <p className=" font-medium">Email GPT</p>
       <DisplayEmails />
       <div className=" flex gap-8">
