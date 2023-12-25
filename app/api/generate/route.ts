@@ -67,7 +67,6 @@ export const POST = async (req: NextRequest) => {
         };
         emails.push(formattedEmail);
       });
-
       const completion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [
@@ -81,7 +80,7 @@ export const POST = async (req: NextRequest) => {
           },
           {
             role: "user",
-            content: `User prompt:\n${body.prompt}`,
+            content: `User prompt:\n${body.messages[0].content}`,
           },
         ],
         stream: true,
