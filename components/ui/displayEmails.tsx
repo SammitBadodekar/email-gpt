@@ -22,7 +22,7 @@ const DisplayEmails = () => {
               prompt: textarea,
             },
             {
-              timeout: 30000,
+              timeout: 300000,
             }
           );
           setTextarea(data.message.content);
