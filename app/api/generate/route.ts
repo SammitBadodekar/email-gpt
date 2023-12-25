@@ -52,11 +52,17 @@ export const POST = async (req: NextRequest) => {
       const resp = await Promise.all(promises);
 
       resp.forEach((email) => {
+        const FromRegex = /^(?:.+ <.+@[^>]+>$|^"([^"]*)"$)/;
+        const ToRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        const isValidFrom = FromRegex.test(email.data.payload.headers[4].value);
+        const isValidTo = ToRegex.test(email.data.payload.headers[5].value);
+
         const formattedEmail = {
           message: email.data.snippet,
           date: email.data.payload.headers[1].value,
-          from: email.data.payload.headers[4].value,
-          to: email.data.payload.headers[5].value,
+          from: isValidFrom ? email.data.payload.headers[4].value : "",
+          to: isValidTo ? email.data.payload.headers[5].value : "",
         };
         emails.push(formattedEmail);
       });
