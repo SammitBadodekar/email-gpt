@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
-import { oAuth2Client } from "@/lib/oauth";
-import { options } from "../auth/[...nextauth]/options";
-import { getServerSession } from "next-auth";
-import { gmail } from "@/lib/gmail";
+
 import { OpenAIStream, StreamingTextResponse } from "ai";
 
 export const dynamic = "force-dynamic";
+export const runtime = "edge";
 
 import OpenAI from "openai";
 
@@ -18,65 +15,17 @@ export const POST = async (req: NextRequest) => {
   const body = await req.json();
 
   try {
-    const session = await getServerSession(options);
-    const user = await prisma?.user.findUnique({
-      where: {
-        email: session?.user?.email!,
-      },
-    });
-
-    if (user?.access_token && user.refresh_token) {
-      oAuth2Client.setCredentials({
-        refresh_token: user?.refresh_token!,
-        access_token: user?.access_token!,
-      });
-      const data = await gmail.users.messages.list({
-        userId: "me",
-        q: `(from:${body.email} OR to:${body.email}) AND (from:me OR to:me)`,
-        maxResults: 20,
-      });
-
-      const emails: any[] = [];
-      const promises: Promise<any>[] = [];
-
-      data.data.messages?.forEach((email) => {
-        promises.push(
-          gmail.users.messages.get({
-            userId: "me",
-            id: email.id!,
-            format: "full",
-            metadataHeaders: ["From", "To"],
-          })
-        );
-      });
-
-      const resp = await Promise.all(promises);
-
-      resp.forEach((email) => {
-        const FromRegex = /^(?:.+ <.+@[^>]+>$|^"([^"]*)"$)/;
-        const ToRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-        const isValidFrom = FromRegex.test(email.data.payload.headers[4].value);
-        const isValidTo = ToRegex.test(email.data.payload.headers[5].value);
-
-        const formattedEmail = {
-          message: email.data.snippet,
-          date: email.data.payload.headers[1].value,
-          from: isValidFrom ? email.data.payload.headers[4].value : "",
-          to: isValidTo ? email.data.payload.headers[5].value : "",
-        };
-        emails.push(formattedEmail);
-      });
+    if (body?.user?.access_token && body?.user.refresh_token) {
       const completion = await openai.chat.completions.create({
         model: "gpt-4",
         messages: [
           {
             role: "system",
             content: `You are a professional email writer who gives responses based on previous emails and on the input prompt that the user provides, you will be provided with an array of emails with format {message: string , date: string, from: string, to: string } as the history of conversation, where the from and to are the email Ids of the users and user prompt. Give the appropriate email response based on the previous history emails and user prompt, use the history email array as context so any names or information should be used from context. You will be penalized if you use any information other than available in history and the response should be only in email format and the tone and style of the email should be the same as the requesting user.\n\nRequesting user email:\n${
-              user?.email
+              body?.user?.email
             }\n\nRequesting username:\n${
-              user?.name
-            }\n\nEmail history Array:\n${JSON.stringify(emails)}`,
+              body?.user?.name
+            }\n\nEmail history Array:\n${JSON.stringify(body.emails)}`,
           },
           {
             role: "user",

@@ -1,13 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { Button } from "./button";
 import axios from "axios";
 import { PiSpinnerGapLight } from "react-icons/pi";
 import toast from "react-hot-toast";
 import { useChat } from "ai/react";
+import { User } from "@prisma/client";
+import { getEmails } from "@/app/actions";
+import { gmail } from "@/lib/gmail";
 
-const DisplayEmails = () => {
+const DisplayEmails = ({ user }: { user: User }) => {
   const [email, setEmail] = useState("");
+  const [emails, setEmails] = useState([]);
   const [textarea, setTextarea] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -24,23 +28,31 @@ const DisplayEmails = () => {
     sendExtraMessageFields: true,
     body: {
       email,
+      user,
+      emails,
     },
   });
 
   return (
     <div className="w-full lg:w-[50%] flex justify-center items-center p-8 ">
       <form
+        action={async (formData: FormData) => {
+          const emails = await getEmails(formData);
+          setEmails(JSON.parse(emails));
+        }}
         onSubmit={(e) => {
-          handleSubmit(e);
           if (messages.length > 0) {
             setMessages([]);
+          } else {
+            handleSubmit(e);
           }
         }}
         className="w-full"
       >
         <div className=" flex flex-col gap-4 w-full">
           <input
-            type="text"
+            name="email"
+            type="email"
             className=" p-2 border-2 rounded-md"
             placeholder="john.doe@mail.com"
             value={email}
