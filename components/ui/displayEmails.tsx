@@ -44,7 +44,9 @@ const DisplayEmails = ({ user }: { user: User }) => {
           if (messages.length > 0) {
             setMessages([]);
           } else {
-            handleSubmit(e);
+            if (emails.length > 0) {
+              handleSubmit(e);
+            }
           }
         }}
         className="w-full"
